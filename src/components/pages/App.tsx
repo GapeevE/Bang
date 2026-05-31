@@ -1,6 +1,10 @@
+import PlayerCard from "@/components/blocks/PlayerCard";
+
 function App() {
   return (
-    <div>123</div>
+    <div>
+      <PlayerCard></PlayerCard>
+    </div>
   )
 }
 

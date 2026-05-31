@@ -98,7 +98,6 @@ export function StartForm() {
 
   const countPlayers = form.watch("countPlayers")
 
-  // Синхронизируем карточки игроков с выбранным количеством
   useEffect(() => {
     const target =
       Number.isFinite(countPlayers) && countPlayers >= MIN_PLAYERS
