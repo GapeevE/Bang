@@ -7,20 +7,28 @@ import Header from '@/components/blocks/Header.tsx';
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
 import Start from '@/components/pages/Start';
+import GameGuard from '@/components/blocks/GameGuard';
 
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <TooltipProvider>
-      <Header />
-      <div>
-        <BrowserRouter>
+      <BrowserRouter>
+        <Header />
+        <div>
           <Routes>
-            <Route path="/" element={<App />} />
+            <Route
+              path="/"
+              element={
+                <GameGuard>
+                  <App />
+                </GameGuard>
+              }
+            />
             <Route path="/start" element={<Start />} />
           </Routes>
-        </BrowserRouter>
-      </div>
+        </div>
+      </BrowserRouter>
       <Toaster />
     </TooltipProvider>
   </StrictMode>,

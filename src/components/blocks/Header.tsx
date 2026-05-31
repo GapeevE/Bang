@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ReloadFreeIcons } from "@hugeicons/core-free-icons";
+import { useNavigate } from "react-router";
 import {
   Tooltip,
   TooltipContent,
@@ -9,6 +10,8 @@ import {
 import { deleteCookie } from "@/lib/utils";
 
 export default function Header() {
+    const navigate = useNavigate();
+
     return (
         <header className="flex flex-row justify-start items-center px-5 py-5 gap-5 bg-zinc-800"> 
             <h1 className="font-black text-red-700 text-4xl">БЭНГ!</h1>
@@ -19,8 +22,8 @@ export default function Header() {
                         size="icon" 
                         variant="destructive"
                         onClick={() => {
-                            console.log('restart tap');
                             deleteCookie("countPlayers");
+                            navigate("/start");
                         }}
                     >
                         <HugeiconsIcon icon={ ReloadFreeIcons } />
