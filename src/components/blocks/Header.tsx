@@ -7,10 +7,11 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { deleteCookie } from "@/lib/utils";
+import { useGame } from "@/lib/useGame";
 
 export default function Header() {
     const navigate = useNavigate();
+    const { setGame } = useGame();
 
     return (
         <header className="flex flex-row justify-start items-center px-5 py-5 gap-5 bg-zinc-800"> 
@@ -22,7 +23,7 @@ export default function Header() {
                         size="icon" 
                         variant="destructive"
                         onClick={() => {
-                            deleteCookie("countPlayers");
+                            setGame(null);
                             navigate("/start");
                         }}
                     >

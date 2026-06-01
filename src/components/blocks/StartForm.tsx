@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useEffect } from "react"
-import { Controller, useFieldArray, useForm } from "react-hook-form"
+import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form"
 import { useNavigate } from "react-router"
 import { toast } from "sonner"
 import * as z from "zod"
@@ -27,10 +27,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { setCookie } from "@/lib/utils"
+import type { Card as GameCard } from "@/lib/cards/card"
+import { createCards } from "@/lib/cards/cards.init"
+import { Deck } from "@/lib/cards/deck"
+import { Game } from "@/lib/game"
+import { useGame } from "@/lib/useGame"
+import { Player } from "@/lib/player"
 
 const MIN_PLAYERS = 4
 const MAX_PLAYERS = 7
+const DEFAULT_HEALTH = 5
 
 const NEON_COLORS = [
   { value: "lime", label: "Лаймовый", className: "bg-lime-400" },
@@ -48,7 +54,7 @@ const nameSchema = z
   .min(2, "От 2 до 20 символов")
   .max(20, "От 2 до 20 символов")
   .regex(
-    /^[А-Яа-яЁё][А-Яа-яЁё \-]*$/,
+    /^[А-Яа-яЁё][А-Яа-яЁё -]*$/,
     "Только русские буквы, тире и пробелы, имя должно начинаться с буквы!",
   )
 
@@ -82,6 +88,7 @@ const makePlayer = (index: number): FormValues["players"][number] => ({
 
 export function StartForm() {
   const navigate = useNavigate()
+  const { setGame } = useGame()
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -96,7 +103,7 @@ export function StartForm() {
     name: "players",
   })
 
-  const countPlayers = form.watch("countPlayers")
+  const countPlayers = useWatch({ control: form.control, name: "countPlayers" })
 
   useEffect(() => {
     const target =
@@ -116,7 +123,21 @@ export function StartForm() {
   }, [countPlayers, fields.length, append, remove])
 
   function onSubmit(data: FormValues) {
-    setCookie("countPlayers", String(data.countPlayers), 2)
+    const players = data.players.map(
+      (player) => new Player(player.name, player.color, DEFAULT_HEALTH),
+    )
+    const deck = new Deck<GameCard>(createCards())
+
+    const game = new Game(players, deck)
+    // Случайно раздаём роли и персонажей (здоровье — от персонажа, +1 шерифу).
+    game.dealRolesAndCharacters()
+    // Тасуем колоду и раздаём стартовые руки, активный игрок (шериф) добирает карту.
+    game.dealInitialHands()
+    game.startTurn()
+
+    // Персистентность игры берёт на себя GameProvider (localStorage).
+    setGame(game)
+
     toast(`Начинаем игру на ${data.countPlayers} игрока!`, {
       position: "top-right",
     })

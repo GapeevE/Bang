@@ -62,4 +62,6 @@ function Button({
   )
 }
 
+// buttonVariants — часть публичного API shadcn (cva-функция рядом с компонентом).
+// eslint-disable-next-line react-refresh/only-export-components
 export { Button, buttonVariants }
